@@ -38,6 +38,10 @@ export class AuthService {
     this.profile = null;
   }
 
+  isAuth(): boolean {
+    return !!this.access_token;
+  }
+
   getProfile(): Observable<IUser | null> {
     return this.http.get<IUser>(`${environment.apiUrl}/profile`);
   }
