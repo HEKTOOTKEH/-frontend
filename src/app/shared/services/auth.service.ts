@@ -10,6 +10,8 @@ export interface ILoginPayload {
   password: string;
 }
 
+const ACCESS_TOKEN_KEY = 'access_token';
+
 interface ILoginDTO {
   access_token: string;
 }
@@ -19,9 +21,11 @@ interface ILoginDTO {
 })
 export class AuthService {
   profile: IUser | null = null;
-  access_token = '';
+  access_token: string;
 
-  constructor(private readonly http: HttpClient) {}
+  constructor(private readonly http: HttpClient) {
+    this.access_token = localStorage.getItem(ACCESS_TOKEN_KEY) || '';
+  }
 
   login(payload: ILoginPayload): Observable<ILoginDTO> {
     return this.http
@@ -29,6 +33,7 @@ export class AuthService {
       .pipe(
         tap((response) => {
           this.access_token = response.access_token;
+          localStorage.setItem(ACCESS_TOKEN_KEY, this.access_token);
         }),
       );
   }
@@ -36,6 +41,7 @@ export class AuthService {
   logout() {
     this.access_token = '';
     this.profile = null;
+    localStorage.removeItem(ACCESS_TOKEN_KEY);
   }
 
   isAuth(): boolean {
